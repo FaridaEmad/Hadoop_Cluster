@@ -1,0 +1,128 @@
+version: "3.9"
+
+services:
+  node1:
+    build: .
+    image: hadoop-ha
+    container_name: node01
+    hostname: node01
+    ports:
+      - "8481:8480"
+      - "9871:9870"
+      - "8081:8088"
+      - "8486:8485"
+    depends_on:
+      - node3
+      - node4
+    command: /root/start-cluster.sh
+    volumes:
+      - ./shared/hadoop:/opt/hadoop/etc/hadoop
+      - ./shared/data:/data
+      - ./shared/namenode/node01:/opt/hadoop/dfs/name
+      - ./shared/journal/node01:/opt/hadoop/dfs/journal
+    networks:
+      cluster-network:
+        ipv4_address: 172.30.0.11
+    extra_hosts:
+      - "node01:172.30.0.11"
+      - "node02:172.30.0.12"
+      - "node03:172.30.0.13"
+
+  node2:
+    image: hadoop-ha
+    container_name: node02
+    hostname: node02
+    ports:
+      - "8482:8480"
+      - "9872:9870"
+      - "8082:8088"
+      - "8487:8485" 
+    depends_on:
+      - node3
+      - node4
+    command: /root/start-cluster.sh
+    volumes:
+      - ./shared/hadoop:/opt/hadoop/etc/hadoop
+      - ./shared/data:/data
+      - ./shared/namenode/node02:/opt/hadoop/dfs/name
+      - ./shared/journal/node02:/opt/hadoop/dfs/journal
+    networks:
+      cluster-network:
+        ipv4_address: 172.30.0.12
+    extra_hosts:
+      - "node01:172.30.0.11"
+      - "node02:172.30.0.12"
+      - "node03:172.30.0.13"
+  node3:
+    image: hadoop-ha
+    container_name: node03
+    hostname: node03
+    ports:
+      - "8483:8480"
+      - "9873:9870"
+      - "8083:8088"
+      - "8488:8485"
+    command: /root/start-cluster.sh
+    volumes:
+      - ./shared/hadoop:/opt/hadoop/etc/hadoop
+      - ./shared/data:/data
+      - ./shared/datanode/node03:/opt/hadoop/dfs/data
+      - ./shared/journal/node03:/opt/hadoop/dfs/journal
+    networks:
+      cluster-network:
+        ipv4_address: 172.30.0.13
+    extra_hosts:
+      - "node01:172.30.0.11"
+      - "node02:172.30.0.12"
+      - "node03:172.30.0.13"
+
+  node4:
+    image: hadoop-ha
+    container_name: node04
+    hostname: node04
+    ports:
+      - "8484:8480"
+      - "9874:9870"
+      - "8084:8088"
+      - "2181:2181"
+    command: /root/start-cluster.sh
+    volumes:
+      - ./shared/hadoop:/opt/hadoop/etc/hadoop
+      - ./shared/data:/data
+      - ./shared/datanode/node04:/opt/hadoop/dfs/data
+      - ./shared/zookeeper:/var/lib/zookeeper
+    networks:
+      cluster-network:
+        ipv4_address: 172.30.0.14
+    extra_hosts:
+      - "node01:172.30.0.11"
+      - "node02:172.30.0.12"
+      - "node03:172.30.0.13"
+
+  node5:
+    image: hadoop-ha
+    container_name: node05
+    hostname: node05
+    ports:
+      - "8485:8480"
+      - "9875:9870"
+      - "8085:8088"
+    command: /root/start-cluster.sh
+    volumes:
+      - ./shared/hadoop:/opt/hadoop/etc/hadoop
+      - ./shared/data:/data
+      - ./shared/datanode/node05:/opt/hadoop/dfs/data
+    networks:
+      cluster-network:
+        ipv4_address: 172.30.0.15
+    extra_hosts:
+      - "node01:172.30.0.11"
+      - "node02:172.30.0.12"
+      - "node03:172.30.0.13"
+
+networks:
+  cluster-network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.30.0.0/16
