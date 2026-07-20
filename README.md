@@ -17,10 +17,6 @@ This project builds a High Availability (HA) Hadoop Cluster using Docker contain
 •	1 ZooKeeper node
 
 # 2.	Nodes & Roles Distribution
- ![alt text](image.png)
-Note: this picture is generated using ai to visualize my design.
-
-Note: I drew the following design.
 ![alt text](image-1.png)
 
 ![alt text](image-2.png)
